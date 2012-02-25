@@ -1,7 +1,8 @@
 on early-init
     start ueventd
+
 on init
-    export PATH /sbin
+    export PATH /sbin:/system/bin
     export ANDROID_ROOT /system
     export ANDROID_DATA /data
     export EXTERNAL_STORAGE /sdcard
@@ -13,12 +14,17 @@ on init
     mkdir /cache
     mount /tmp /tmp tmpfs
     symlink /misc /etc
+
 on boot
     ifup lo
     hostname localhost
     domainname localdomain
     class_start default
+    busybox echo charge_adb >> /dev/usb_device_mode
+    adbd
+
 service ueventd /sbin/ueventd
     critical
 service recovery /sbin/recovery
+
 service adbd /sbin/adbd recovery
